@@ -1,0 +1,1011 @@
+
+{% extends "base.html" %}
+
+{% block title %}Add Income - Expense Tracker{% endblock %}
+
+{% block extra_css %}
+<style>
+/* =====================================================
+   TOP NAVIGATION
+===================================================== */
+
+.top-navigation {
+    width: 100%;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+    margin-bottom: 16px;
+}
+
+.top-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+/* Hidden on desktop */
+.menu-button {
+    display: none;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #edf0ed;
+    border-radius: 8px;
+    background: white;
+    color: #06372a;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.menu-button:hover {
+    background: #edf3ef;
+}
+
+.nav-page-title {
+    margin: 0;
+    color: #17221d;
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+
+/* =====================================================
+   PAGE DESCRIPTION
+===================================================== */
+
+.page-header {
+    width: 100%;
+    margin-bottom: 18px;
+}
+
+.page-header p {
+    color: #89948f;
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+
+/* =====================================================
+   MESSAGES
+===================================================== */
+
+.messages {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.message {
+    padding: 11px 13px;
+    background: #edf8d9;
+    border: 1px solid #dcecc1;
+    border-radius: 8px;
+    color: #567800;
+    font-size: 12px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+
+/* =====================================================
+   ADD INCOME CARD AND TABLE CARD
+===================================================== */
+
+.add-box,
+.table-box {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    background: white;
+    border: 1px solid #edf0ed;
+    border-radius: 13px;
+    padding: 20px;
+    box-shadow: 0 4px 18px rgba(20, 40, 30, 0.045);
+}
+
+.add-box {
+    margin-bottom: 18px;
+}
+
+.add-box:hover,
+.table-box:hover {
+    box-shadow: 0 8px 25px rgba(20, 40, 30, 0.06);
+}
+
+
+/* =====================================================
+   CARD HEADING
+===================================================== */
+
+.heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 7px;
+}
+
+.heading-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: #edf8d9;
+    color: #567800;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.add-box h2,
+.table-header h2 {
+    margin: 0;
+    color: #17221d;
+    font-size: 16px;
+}
+
+.subtitle {
+    margin: 0 0 20px 49px;
+    color: #8a9892;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.income-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.form-group label {
+    color: #4d5b55;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.required {
+    color: #b54a43;
+}
+
+
+/* =====================================================
+   INPUTS
+===================================================== */
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    border: 1px solid #dce4e0;
+    border-radius: 8px;
+    background: #fbfcfc;
+    color: #24332d;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input {
+    height: 42px;
+    padding: 0 11px;
+}
+
+.form-group textarea {
+    min-height: 85px;
+    padding: 11px;
+    resize: vertical;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #a0aaa6;
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+    border-color: #b7cbc3;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    background: white;
+    border-color: #064e3b;
+    box-shadow: 0 0 0 3px rgba(6, 78, 59, 0.08);
+}
+
+.form-help {
+    color: #99a49f;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   FORM BUTTONS
+===================================================== */
+
+.form-buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: 2px;
+}
+
+.save-button,
+.back-button {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.save-button {
+    padding: 0 18px;
+    border: none;
+    background: #06372a;
+    color: white;
+}
+
+.save-button:hover {
+    background: #0b4b38;
+    transform: translateY(-1px);
+}
+
+.save-icon {
+    margin-right: 6px;
+    color: #b8f000;
+}
+
+.back-button {
+    padding: 0 16px;
+    border: 1px solid #dce4e0;
+    background: white;
+    color: #52615a;
+}
+
+.back-button:hover {
+    background: #f5f7f5;
+}
+
+
+/* =====================================================
+   INFORMATION BOX
+===================================================== */
+
+.info-box {
+    margin-top: 18px;
+    padding: 12px 13px;
+    background: #f4f8ee;
+    border: 1px solid #e0eacb;
+    border-radius: 8px;
+    color: #5e6b51;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.info-box strong {
+    color: #40522d;
+}
+
+
+/* =====================================================
+   INCOME HISTORY
+===================================================== */
+
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.income-count {
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: #edf8d9;
+    color: #567800;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
+/* =====================================================
+   RESPONSIVE TABLE
+===================================================== */
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #edf1ef;
+    border-radius: 9px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-container::-webkit-scrollbar {
+    height: 5px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #cbd8d2;
+    border-radius: 10px;
+}
+
+table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: collapse;
+}
+
+thead th {
+    padding: 11px 12px;
+    background: #f7f9f8;
+    color: #77847f;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    border-bottom: 1px solid #e5ebe8;
+    white-space: nowrap;
+}
+
+tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #eef2f0;
+    color: #4d5b55;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+tbody tr:hover {
+    background: #fafcfb;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.number {
+    width: 40px;
+    color: #9aa6a1;
+    font-size: 11px;
+}
+
+.source-name {
+    color: #24332d;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.amount {
+    color: #08704f;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.date {
+    color: #8a9691;
+    white-space: nowrap;
+}
+
+.description {
+    max-width: 180px;
+    color: #8a9691;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+/* =====================================================
+   EDIT AND DELETE
+===================================================== */
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.edit-btn,
+.delete-btn {
+    padding: 7px 9px;
+    border: none;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.edit-btn {
+    background: #eef7f3;
+    color: #08704f;
+}
+
+.edit-btn:hover {
+    background: #064e3b;
+    color: white;
+}
+
+.delete-btn {
+    background: #fdf0ef;
+    color: #b54a43;
+}
+
+.delete-btn:hover {
+    background: #b54a43;
+    color: white;
+}
+
+.delete-form {
+    display: inline;
+    margin: 0;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.empty {
+    padding: 38px 16px;
+    text-align: center;
+    color: #8a9691;
+}
+
+.empty-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: #edf8d9;
+    color: #567800;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.empty p:first-of-type {
+    margin: 0 0 6px;
+    color: #37463f;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.empty p:last-of-type {
+    margin: 0;
+    color: #99a49f;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   TABLET: SHOW MENU BUTTON
+===================================================== */
+
+@media (max-width: 768px) {
+    .menu-button {
+        display: flex;
+    }
+
+    .top-navigation {
+        min-height: 38px;
+        margin-top: 12px;
+        margin-bottom: 13px;
+    }
+
+    .top-left {
+        gap: 9px;
+    }
+
+    .menu-button {
+        width: 34px;
+        height: 34px;
+    }
+
+    .nav-page-title {
+        font-size: 21px;
+    }
+
+    .page-header {
+        margin-bottom: 15px;
+    }
+
+    .page-header p {
+        font-size: 11px;
+    }
+
+    .form-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 15px;
+    }
+
+    .add-box,
+    .table-box {
+        padding: 18px;
+        border-radius: 11px;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .save-button,
+    .back-button {
+        width: 100%;
+    }
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+    .top-navigation {
+        margin-top: 10px;
+        margin-bottom: 12px;
+    }
+
+    .top-left {
+        width: 100%;
+        gap: 8px;
+    }
+
+    .menu-button {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+        font-size: 16px;
+    }
+
+    .nav-page-title {
+        min-width: 0;
+        font-size: 19px;
+    }
+
+    .page-header p {
+        font-size: 11px;
+    }
+
+    .add-box,
+    .table-box {
+        padding: 14px;
+        border-radius: 10px;
+    }
+
+    .add-box h2,
+    .table-header h2 {
+        font-size: 14px;
+    }
+
+    .heading-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .subtitle {
+        margin-left: 0;
+        margin-top: 7px;
+        margin-bottom: 17px;
+    }
+
+    .actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 62px;
+    }
+
+    .edit-btn,
+    .delete-btn {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+        padding: 7px 4px;
+    }
+
+    table {
+        min-width: 660px;
+    }
+}
+
+
+/* =====================================================
+   EXTRA SMALL MOBILE
+===================================================== */
+
+@media (max-width: 380px) {
+    .top-navigation {
+        margin-top: 8px;
+        margin-bottom: 10px;
+    }
+
+    .top-left {
+        gap: 7px;
+    }
+
+    .menu-button {
+        width: 30px;
+        height: 30px;
+    }
+
+    .nav-page-title {
+        font-size: 18px;
+    }
+
+    .add-box,
+    .table-box {
+        padding: 12px;
+    }
+
+    .heading-icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 12px;
+    }
+
+    .save-button,
+    .back-button {
+        min-height: 40px;
+    }
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- =====================================================
+     MENU AND PAGE HEADING
+===================================================== -->
+
+<div class="top-navigation">
+    <div class="top-left">
+
+        <button
+            type="button"
+            class="menu-button"
+            onclick="openMenu()"
+            aria-label="Open menu"
+            aria-controls="sidebar"
+            aria-expanded="false"
+        >
+            ☰
+        </button>
+
+        <h1 class="nav-page-title">Add Income</h1>
+
+    </div>
+</div>
+
+
+<!-- =====================================================
+     PAGE DESCRIPTION
+===================================================== -->
+
+<div class="page-header">
+    <p>
+        Record your income and keep track of your earnings.
+    </p>
+</div>
+
+
+<!-- =====================================================
+     DJANGO MESSAGES
+===================================================== -->
+
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+<!-- =====================================================
+     ADD INCOME FORM
+===================================================== -->
+
+<div class="add-box">
+
+    <div class="heading">
+        <div class="heading-icon">IN</div>
+        <h2>Add Income</h2>
+    </div>
+
+    <p class="subtitle">
+        Enter the details of your income below.
+    </p>
+
+    <form method="POST" class="income-form">
+        {% csrf_token %}
+
+        <div class="form-row">
+
+            <div class="form-group">
+                <label for="source">
+                    Income Source <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="source"
+                    name="source"
+                    placeholder="Example: Salary, Freelance, Business"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="amount">
+                    Amount <span class="required">*</span>
+                </label>
+
+                <input
+                    type="number"
+                    id="amount"
+                    name="amount"
+                    placeholder="Enter amount"
+                    step="0.01"
+                    min="0.01"
+                    required
+                >
+
+                <span class="form-help">
+                    Enter the income amount in Indian Rupees.
+                </span>
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label for="date">
+                Date <span class="required">*</span>
+            </label>
+
+            <input
+                type="date"
+                id="date"
+                name="date"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="description">Description</label>
+
+            <textarea
+                id="description"
+                name="description"
+                placeholder="Add a note about this income..."
+            ></textarea>
+        </div>
+
+        <div class="form-buttons">
+
+            <button type="submit" class="save-button">
+                <span class="save-icon">✓</span>
+                Save Income
+            </button>
+
+        </div>
+    </form>
+
+    <div class="info-box">
+        <strong>Tip:</strong>
+        Keep your income records updated so your dashboard
+        can accurately show your total income and balance.
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     INCOME HISTORY
+===================================================== -->
+
+<div class="table-box">
+
+    <div class="table-header">
+        <h2>My Income</h2>
+
+        {% if incomes %}
+            <span class="income-count">
+                {{ incomes|length }}
+                Income{{ incomes|length|pluralize }}
+            </span>
+        {% endif %}
+    </div>
+
+    {% if incomes %}
+
+        <div class="table-container">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Source</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for income in incomes %}
+                        <tr>
+
+                            <td class="number">
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td class="source-name">
+                                {{ income.source }}
+                            </td>
+
+                            <td class="amount">
+                                ₹{{ income.amount|floatformat:2 }}
+                            </td>
+
+                            <td class="date">
+                                {{ income.date|date:"d M Y" }}
+                            </td>
+
+                            <td class="description">
+                                {% if income.description %}
+                                    {{ income.description }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="actions">
+
+                                    <a
+                                        href="{% url 'edit_income' income.id %}"
+                                        class="edit-btn"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <form
+                                        method="POST"
+                                        action="{% url 'delete_income' income.id %}"
+                                        class="delete-form"
+                                        onsubmit="return confirm('Are you sure you want to delete this income?');"
+                                    >
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="delete-btn"
+                                        >
+                                            Delete
+                                        </button>
+                                    </form>
+
+                                </div>
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+            <div class="empty-icon">IN</div>
+
+            <p>No income records found.</p>
+
+            <p>
+                Add your first income using the form above.
+            </p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+/* =====================================================
+   AUTOMATIC CURRENT DATE
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById("date");
+
+    if (dateInput && !dateInput.value) {
+        const today = new Date();
+
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+
+        dateInput.value = `${year}-${month}-${day}`;
+    }
+});
+
+
+/* =====================================================
+   FULLSCREEN
+===================================================== */
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement
+            .requestFullscreen()
+            .catch(function (error) {
+                console.log("Fullscreen error:", error);
+            });
+    } else {
+        document.exitFullscreen();
+    }
+}
+</script>
+{% endblock %}

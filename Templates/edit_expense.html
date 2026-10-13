@@ -1,0 +1,1169 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Expense - Expense Tracker
+{% endblock %}
+
+
+{% block extra_css %}
+
+<style>
+
+/* =====================================================
+   EDIT EXPENSE PAGE
+===================================================== */
+
+.page-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* =====================================================
+   TOP NAVIGATION
+===================================================== */
+
+.top-navigation {
+    width: 100%;
+    height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+
+.top-left {
+    display: flex;
+    align-items: center;
+}
+
+
+.collapse-button {
+    width: 28px;
+    height: 28px;
+
+    border: none;
+    background: white;
+    border-radius: 8px;
+
+    color: #87948f;
+    font-size: 13px;
+
+    cursor: pointer;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.search-box {
+    width: 260px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+
+    background: white;
+
+    border: 1px solid #edf0ed;
+    border-radius: 18px;
+
+    padding: 0 12px;
+
+    margin-left: auto;
+    margin-right: 12px;
+}
+
+
+.search-box input {
+    width: 100%;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: #37423d;
+    font-size: 10px;
+}
+
+
+.search-box input::placeholder {
+    color: #a5ada9;
+}
+
+
+.search-icon {
+    color: #8a9791;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   TOP RIGHT
+===================================================== */
+
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.top-icon {
+    width: 31px;
+    height: 31px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #edf0ed;
+
+    background: white;
+    border-radius: 9px;
+
+    color: #77857f;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 4px 8px;
+
+    background: white;
+
+    border-radius: 10px;
+
+    border: 1px solid #edf0ed;
+}
+
+
+.profile-icon {
+    width: 27px;
+    height: 27px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #dce9e3;
+
+    color: #164b3a;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+
+.profile-name {
+    color: #27332e;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+
+.profile-role {
+    color: #9aa49f;
+
+    font-size: 8px;
+}
+
+
+.profile-arrow {
+    color: #9aa49f;
+
+    font-size: 9px;
+
+    margin-left: 3px;
+}
+
+
+/* =====================================================
+   PAGE HEADER
+===================================================== */
+
+.page-header {
+    width: 100%;
+    max-width: 780px;
+
+    margin-bottom: 20px;
+}
+
+
+.page-header-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    justify-content: center;
+}
+
+
+.page-header h1 {
+    font-size: 23px;
+
+    font-weight: 700;
+
+    color: #17221d;
+
+    margin-bottom: 5px;
+
+    margin-top: 35px;
+}
+
+
+.page-header p {
+    color: #89948f;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   MESSAGE BOX
+===================================================== */
+
+.messages-container {
+    width: 100%;
+    max-width: 780px;
+
+    margin-bottom: 15px;
+}
+
+
+.message {
+    padding: 10px 13px;
+
+    margin-bottom: 8px;
+
+    border-radius: 8px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    border: 1px solid transparent;
+}
+
+
+.message.success {
+    background: #edf8d9;
+
+    color: #567800;
+
+    border-color: #dceebc;
+}
+
+
+.message.warning {
+    background: #fff7df;
+
+    color: #8a6500;
+
+    border-color: #f5e4ad;
+}
+
+
+.message.error {
+    background: #fdf0ef;
+
+    color: #b54a43;
+
+    border-color: #f2d2cf;
+}
+
+
+.message.info {
+    background: #edf4fb;
+
+    color: #365f8a;
+
+    border-color: #d5e4f2;
+}
+
+
+/* =====================================================
+   EDIT EXPENSE CARD
+===================================================== */
+
+.edit-box {
+    width: 100%;
+    max-width: 780px;
+
+    background: white;
+
+    border: 1px solid #edf0ed;
+
+    border-radius: 13px;
+
+    padding: 20px;
+
+    margin-bottom: 17px;
+
+    box-shadow:
+        0 4px 18px rgba(20, 40, 30, 0.045);
+}
+
+
+/* =====================================================
+   CARD HEADER
+===================================================== */
+
+.heading {
+    display: flex;
+
+    align-items: center;
+
+    gap: 11px;
+
+    margin-bottom: 7px;
+}
+
+
+.heading-icon {
+    width: 37px;
+    height: 37px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #edf8d9;
+
+    color: #567800;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    flex-shrink: 0;
+}
+
+
+.edit-box h2 {
+    color: #17221d;
+
+    font-size: 14px;
+}
+
+
+.subtitle {
+    color: #8a9892;
+
+    font-size: 9px;
+
+    margin-left: 48px;
+
+    margin-bottom: 17px;
+
+    line-height: 1.5;
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.expense-form {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 14px;
+}
+
+
+.form-group {
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+
+.form-group label {
+    color: #4d5b55;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    margin-bottom: 6px;
+}
+
+
+/* =====================================================
+   INPUTS
+===================================================== */
+
+.expense-form input,
+.expense-form select,
+.expense-form textarea {
+    width: 100%;
+
+    border: 1px solid #dce4e0;
+
+    border-radius: 8px;
+
+    background: #fbfcfc;
+
+    color: #24332d;
+
+    font-size: 10px;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+
+.expense-form input,
+.expense-form select {
+    height: 39px;
+
+    padding: 0 11px;
+}
+
+
+.expense-form textarea {
+    min-height: 78px;
+
+    padding: 10px 11px;
+
+    resize: vertical;
+
+    line-height: 1.5;
+}
+
+
+.expense-form input:hover,
+.expense-form select:hover,
+.expense-form textarea:hover {
+    border-color: #b7cbc3;
+}
+
+
+.expense-form input:focus,
+.expense-form select:focus,
+.expense-form textarea:focus {
+    background: white;
+
+    border-color: #064e3b;
+
+    box-shadow:
+        0 0 0 3px rgba(6, 78, 59, 0.08);
+}
+
+
+/* =====================================================
+   UPDATE BUTTON
+===================================================== */
+
+.update-btn {
+    grid-column: 1 / -1;
+
+    height: 40px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #06372a;
+
+    color: white;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.update-btn:hover {
+    background: #0b4b38;
+
+    transform: translateY(-1px);
+}
+
+
+.update-btn:active {
+    transform: translateY(0);
+}
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+.back {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    width: 100%;
+
+    max-width: 780px;
+
+    color: #064e3b;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+
+.back:hover {
+    color: #03291f;
+
+    transform: translateX(-2px);
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 1100px) {
+
+    .search-box {
+        width: 220px;
+    }
+
+    .edit-box,
+    .page-header,
+    .messages-container,
+    .back {
+        max-width: 750px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .top-navigation {
+        height: 45px;
+
+        margin-bottom: 12px;
+    }
+
+
+    .collapse-button {
+        display: none;
+    }
+
+
+    .search-box {
+        display: none;
+    }
+
+
+    .top-right {
+        margin-left: auto;
+    }
+
+
+    .top-icon {
+        display: none;
+    }
+
+
+    .profile {
+        padding: 4px 7px;
+    }
+
+
+    .profile-info {
+        display: none;
+    }
+
+
+    .profile-arrow {
+        display: none;
+    }
+
+
+    .page-header,
+    .messages-container,
+    .edit-box,
+    .back {
+        max-width: 100%;
+    }
+
+
+    .page-header {
+        margin-bottom: 16px;
+    }
+
+
+    .page-header-left {
+        justify-content: flex-start;
+    }
+
+
+    .page-header h1 {
+        font-size: 21px;
+
+        margin-top: 25px;
+    }
+
+
+    .page-header p {
+        font-size: 9px;
+    }
+
+
+    .edit-box {
+        padding: 17px;
+
+        border-radius: 11px;
+    }
+
+
+    .expense-form {
+        grid-template-columns: 1fr;
+
+        gap: 13px;
+    }
+
+
+    .form-group.full,
+    .update-btn {
+        grid-column: auto;
+    }
+
+
+    .subtitle {
+        margin-left: 0;
+
+        margin-top: 7px;
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .top-navigation {
+        margin-bottom: 10px;
+    }
+
+
+    .top-right {
+        display: none;
+    }
+
+
+    .page-header h1 {
+        font-size: 20px;
+
+        margin-top: 20px;
+    }
+
+
+    .page-header p {
+        font-size: 9px;
+
+        line-height: 1.5;
+    }
+
+
+    .edit-box {
+        padding: 15px;
+
+        border-radius: 10px;
+    }
+
+
+    .edit-box h2 {
+        font-size: 13px;
+    }
+
+
+    .heading-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+
+    .form-group label {
+        font-size: 9px;
+    }
+
+
+    .expense-form input,
+    .expense-form select {
+        height: 38px;
+
+        font-size: 10px;
+
+        padding: 0 10px;
+    }
+
+
+    .expense-form textarea {
+        min-height: 75px;
+
+        font-size: 10px;
+    }
+
+
+    .update-btn {
+        height: 39px;
+
+        font-size: 10px;
+    }
+
+
+    .back {
+        font-size: 9px;
+    }
+
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .page-header h1 {
+        font-size: 19px;
+    }
+
+
+    .edit-box {
+        padding: 13px;
+    }
+
+
+    .heading {
+        gap: 8px;
+    }
+
+
+    .heading-icon {
+        width: 33px;
+        height: 33px;
+    }
+
+
+    .edit-box h2 {
+        font-size: 12px;
+    }
+
+
+    .subtitle {
+        font-size: 8px;
+    }
+
+}
+
+
+/* =====================================================
+   LANDSCAPE MOBILE
+===================================================== */
+
+@media (max-height: 500px) and (orientation: landscape) {
+
+    .page-area {
+        padding-bottom: 20px;
+    }
+
+}
+
+</style>
+
+{% endblock %}
+
+
+{% block content %}
+
+<div class="page-area">
+
+
+    <!-- =================================================
+         TOP NAVIGATION
+    ================================================== -->
+
+    <div class="top-navigation">
+
+        <div class="top-left">
+
+            <!-- MOBILE SIDEBAR BUTTON -->
+
+            <button
+                type="button"
+                class="menu-button"
+                onclick="openMenu()"
+                aria-label="Open menu"
+            >
+                ☰
+            </button>
+
+
+            <!-- DESKTOP BUTTON -->
+
+            <button
+                type="button"
+                class="collapse-button"
+                aria-label="Menu"
+            >
+                ☰
+            </button>
+
+        </div>
+
+
+        <!-- SEARCH -->
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                placeholder="Search..."
+            >
+
+            <span class="search-icon">
+                ⌕
+            </span>
+
+        </div>
+
+
+        <!-- TOP RIGHT -->
+
+        <div class="top-right">
+
+            <div class="top-icon">
+                ?
+            </div>
+
+
+            <div class="top-icon">
+                !
+            </div>
+
+
+            <div class="profile">
+
+                <div class="profile-icon">
+
+                    {{ request.user.username|first|upper }}
+
+                </div>
+
+
+                <div class="profile-info">
+
+                    <span class="profile-name">
+
+                        {{ request.user.username }}
+
+                    </span>
+
+
+                    <span class="profile-role">
+
+                        User
+
+                    </span>
+
+                </div>
+
+
+                <span class="profile-arrow">
+                    ▼
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <div class="page-header">
+
+        <div class="page-header-left">
+
+            <div>
+
+                <h1>
+                    Edit Expense
+                </h1>
+
+                <p>
+                    Update and manage your expense details
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         MESSAGES
+    ================================================== -->
+
+    {% if messages %}
+
+        <div class="messages-container">
+
+            {% for message in messages %}
+
+                <div class="message {{ message.tags }}">
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =================================================
+         EDIT EXPENSE CARD
+    ================================================== -->
+
+    <div class="edit-box">
+
+
+        <!-- CARD HEADER -->
+
+        <div class="heading">
+
+            <div class="heading-icon">
+                EX
+            </div>
+
+            <h2>
+                Edit Expense
+            </h2>
+
+        </div>
+
+
+        <p class="subtitle">
+
+            Update the details of your expense
+            and save your changes.
+
+        </p>
+
+
+        <!-- =================================================
+             FORM
+        ================================================== -->
+
+        <form
+            method="POST"
+            class="expense-form"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- EXPENSE TITLE -->
+
+            <div class="form-group">
+
+                <label for="title">
+                    Expense Title
+                </label>
+
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value="{{ expense.title }}"
+                    placeholder="Example: Grocery"
+                    required
+                >
+
+            </div>
+
+
+            <!-- CATEGORY -->
+
+            <div class="form-group">
+
+                <label for="category">
+                    Category
+                </label>
+
+                <select
+                    id="category"
+                    name="category"
+                    required
+                >
+
+                    {% for category in categories %}
+
+                        <option
+                            value="{{ category.id }}"
+                            {% if category.id == expense.category.id %}
+                                selected
+                            {% endif %}
+                        >
+
+                            {{ category.name }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- AMOUNT -->
+
+            <div class="form-group">
+
+                <label for="amount">
+                    Amount
+                </label>
+
+                <input
+                    type="number"
+                    id="amount"
+                    name="amount"
+                    value="{{ expense.amount }}"
+                    step="0.01"
+                    min="0"
+                    placeholder="500"
+                    required
+                >
+
+            </div>
+
+
+            <!-- DATE -->
+
+            <div class="form-group">
+
+                <label for="date">
+                    Date
+                </label>
+
+                <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value="{{ expense.date|date:'Y-m-d' }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group full">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    placeholder="Optional description"
+                >{{ expense.description }}</textarea>
+
+            </div>
+
+
+            <!-- UPDATE -->
+
+            <button
+                type="submit"
+                class="update-btn"
+            >
+                Update Expense
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- =================================================
+         BACK
+    ================================================== -->
+
+    <a
+        href="{% url 'add_expense' %}"
+        class="back"
+    >
+        ← Back to Expenses
+    </a>
+
+
+</div>
+
+{% endblock %}

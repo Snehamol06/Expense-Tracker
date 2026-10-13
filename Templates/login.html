@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Expense Tracker - Login</title>
+
+    <style>
+
+        /* =========================
+           RESET
+        ========================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+
+        /* =========================
+           BODY
+        ========================= */
+
+        body {
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: #f5f7f5;
+
+            padding: 20px;
+
+            color: #17221d;
+
+            position: relative;
+
+            overflow-x: hidden;
+        }
+
+
+        /* =========================
+           BACKGROUND DECORATION
+        ========================= */
+
+        body::before {
+            content: "";
+
+            position: fixed;
+
+            width: 420px;
+            height: 420px;
+
+            background: rgba(184, 240, 0, 0.10);
+
+            border-radius: 50%;
+
+            top: -190px;
+            left: -170px;
+
+            pointer-events: none;
+        }
+
+
+        body::after {
+            content: "";
+
+            position: fixed;
+
+            width: 360px;
+            height: 360px;
+
+            background: rgba(6, 55, 42, 0.06);
+
+            border-radius: 50%;
+
+            right: -160px;
+            bottom: -170px;
+
+            pointer-events: none;
+        }
+
+
+        /* =========================
+           LOGIN CONTAINER
+        ========================= */
+
+        .login-container {
+
+            width: 100%;
+
+            max-width: 420px;
+
+            background: #ffffff;
+
+            padding: 38px;
+
+            border-radius: 16px;
+
+            border: 1px solid #e5ebe6;
+
+            box-shadow:
+                0 12px 35px rgba(3, 39, 29, 0.10);
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+
+        /* =========================
+           LOGO
+        ========================= */
+
+        .login-logo {
+
+            width: 52px;
+            height: 52px;
+
+            margin: 0 auto 16px;
+
+            background: #06372a;
+
+            color: #b8f000;
+
+            border-radius: 13px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 26px;
+
+            font-weight: bold;
+
+            box-shadow:
+                0 6px 14px rgba(3, 39, 29, 0.15);
+        }
+
+
+        /* =========================
+           HEADING
+        ========================= */
+
+        .login-container h1 {
+
+            text-align: center;
+
+            margin-bottom: 8px;
+
+            color: #06372a;
+
+            font-size: 28px;
+
+            line-height: 1.2;
+
+            font-weight: 700;
+        }
+
+
+        .login-container > p {
+
+            text-align: center;
+
+            color: #718078;
+
+            font-size: 14px;
+
+            margin-bottom: 28px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =========================
+           ERROR MESSAGE
+        ========================= */
+
+        .error {
+
+            color: #b42318;
+
+            background: #fff1f0;
+
+            border: 1px solid #ffd5d2;
+
+            text-align: center;
+
+            padding: 10px 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 18px;
+
+            font-size: 14px;
+
+            line-height: 1.4;
+
+            overflow-wrap: break-word;
+        }
+
+
+        /* =========================
+           FORM GROUP
+        ========================= */
+
+        .form-group {
+
+            margin-bottom: 19px;
+
+            width: 100%;
+        }
+
+
+        .form-group label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-weight: 600;
+
+            color: #263a32;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           INPUT
+        ========================= */
+
+        .form-group input {
+
+            display: block;
+
+            width: 100%;
+
+            min-width: 0;
+
+            padding: 13px 14px;
+
+            border: 1px solid #d8e1db;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            background: #ffffff;
+
+            color: #17221d;
+
+            transition: 0.25s ease;
+        }
+
+
+        .form-group input::placeholder {
+
+            color: #9aa7a0;
+        }
+
+
+        .form-group input:focus {
+
+            border-color: #06372a;
+
+            box-shadow:
+                0 0 0 3px rgba(6, 55, 42, 0.08);
+        }
+
+
+        /* =========================
+           LOGIN BUTTON
+        ========================= */
+
+        .login-btn {
+
+            display: block;
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #06372a;
+
+            color: #ffffff;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.25s ease;
+
+            box-shadow:
+                0 5px 12px rgba(3, 39, 29, 0.13);
+        }
+
+
+        .login-btn:hover {
+
+            background: #0b4b38;
+
+            transform: translateY(-1px);
+        }
+
+
+        .login-btn:active {
+
+            transform: translateY(0);
+        }
+
+
+        /* =========================
+           REGISTER LINK
+        ========================= */
+
+        .login-link {
+
+            text-align: center;
+
+            margin-top: 22px;
+
+            padding-top: 18px;
+
+            border-top: 1px solid #edf1ee;
+
+            color: #718078;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+
+            word-wrap: break-word;
+        }
+
+
+        .login-link a {
+
+            color: #06372a;
+
+            text-decoration: none;
+
+            font-weight: 700;
+
+            margin-left: 3px;
+
+            transition: 0.2s ease;
+        }
+
+
+        .login-link a:hover {
+
+            color: #7ba900;
+
+            text-decoration: underline;
+        }
+
+
+        /* =========================
+           TABLET
+           769px - 1024px
+        ========================= */
+
+        @media (max-width: 1024px) {
+
+            body {
+
+                padding: 25px;
+            }
+
+            .login-container {
+
+                max-width: 410px;
+            }
+        }
+
+
+        /* =========================
+           MOBILE
+           481px - 768px
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            body {
+
+                padding: 20px;
+
+                align-items: center;
+            }
+
+
+            .login-container {
+
+                max-width: 400px;
+
+                padding: 32px;
+
+                border-radius: 14px;
+            }
+
+
+            .login-container h1 {
+
+                font-size: 26px;
+            }
+
+
+            .login-container > p {
+
+                margin-bottom: 25px;
+            }
+        }
+
+
+        /* =========================
+           SMALL MOBILE
+           361px - 480px
+        ========================= */
+
+        @media (max-width: 480px) {
+
+            body {
+
+                padding: 15px;
+            }
+
+
+            body::before {
+
+                width: 280px;
+                height: 280px;
+
+                top: -130px;
+                left: -130px;
+            }
+
+
+            body::after {
+
+                width: 250px;
+                height: 250px;
+
+                right: -120px;
+                bottom: -120px;
+            }
+
+
+            .login-container {
+
+                width: 100%;
+
+                max-width: 100%;
+
+                padding: 28px 22px;
+
+                border-radius: 13px;
+            }
+
+
+            .login-logo {
+
+                width: 48px;
+                height: 48px;
+
+                font-size: 24px;
+
+                margin-bottom: 14px;
+            }
+
+
+            .login-container h1 {
+
+                font-size: 24px;
+
+                margin-bottom: 7px;
+            }
+
+
+            .login-container > p {
+
+                font-size: 13px;
+
+                margin-bottom: 23px;
+            }
+
+
+            .error {
+
+                font-size: 13px;
+
+                padding: 9px 10px;
+
+                margin-bottom: 16px;
+            }
+
+
+            .form-group {
+
+                margin-bottom: 16px;
+            }
+
+
+            .form-group label {
+
+                font-size: 13px;
+
+                margin-bottom: 6px;
+            }
+
+
+            .form-group input {
+
+                padding: 12px;
+
+                font-size: 14px;
+
+                min-height: 44px;
+            }
+
+
+            .login-btn {
+
+                padding: 12px;
+
+                min-height: 44px;
+
+                font-size: 15px;
+            }
+
+
+            .login-link {
+
+                margin-top: 19px;
+
+                padding-top: 16px;
+
+                font-size: 13px;
+            }
+        }
+
+
+        /* =========================
+           VERY SMALL PHONES
+           360px AND BELOW
+        ========================= */
+
+        @media (max-width: 360px) {
+
+            body {
+
+                padding: 10px;
+            }
+
+
+            .login-container {
+
+                padding: 24px 17px;
+
+                border-radius: 12px;
+            }
+
+
+            .login-logo {
+
+                width: 44px;
+                height: 44px;
+
+                font-size: 22px;
+
+                margin-bottom: 12px;
+            }
+
+
+            .login-container h1 {
+
+                font-size: 22px;
+            }
+
+
+            .login-container > p {
+
+                font-size: 12px;
+
+                margin-bottom: 20px;
+            }
+
+
+            .form-group {
+
+                margin-bottom: 14px;
+            }
+
+
+            .form-group input {
+
+                padding: 11px;
+
+                font-size: 14px;
+            }
+
+
+            .login-btn {
+
+                padding: 11px;
+
+                font-size: 14px;
+            }
+
+
+            .login-link {
+
+                font-size: 12px;
+
+                margin-top: 17px;
+
+                padding-top: 14px;
+            }
+        }
+
+
+        /* =========================
+           LANDSCAPE MOBILE
+        ========================= */
+
+        @media (max-height: 550px) and (orientation: landscape) {
+
+            body {
+
+                align-items: flex-start;
+
+                padding-top: 20px;
+
+                padding-bottom: 20px;
+
+                overflow-y: auto;
+            }
+
+
+            .login-container {
+
+                margin: auto;
+
+                padding: 25px 30px;
+            }
+
+
+            .login-logo {
+
+                width: 42px;
+                height: 42px;
+
+                font-size: 21px;
+
+                margin-bottom: 10px;
+            }
+
+
+            .login-container h1 {
+
+                font-size: 23px;
+
+                margin-bottom: 5px;
+            }
+
+
+            .login-container > p {
+
+                margin-bottom: 18px;
+            }
+
+
+            .form-group {
+
+                margin-bottom: 12px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         LOGIN CARD
+    ========================= -->
+
+    <div class="login-container">
+
+
+        <!-- Logo -->
+
+        <div class="login-logo">
+            ₹
+        </div>
+
+
+        <!-- Heading -->
+
+        <h1>
+            Expense Tracker
+        </h1>
+
+
+        <p>
+            Login to manage your expenses
+        </p>
+
+
+        <!-- Error Message -->
+
+        {% if error %}
+
+            <div class="error">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        <!-- Login Form -->
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <!-- Username -->
+
+            <div class="form-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Password -->
+
+            <div class="form-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Login Button -->
+
+            <button
+                type="submit"
+                class="login-btn"
+            >
+                Login
+            </button>
+
+
+            <!-- Register -->
+
+            <div class="login-link">
+
+                Don't have an account?
+
+                <a href="{% url 'register' %}">
+                    Register
+                </a>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+
+</body>
+</html>

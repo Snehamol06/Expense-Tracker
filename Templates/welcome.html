@@ -1,0 +1,1370 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Expense Tracker{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ================= BASE ================= */
+
+    .dashboard,
+    .dashboard * {
+        box-sizing: border-box;
+    }
+
+    .dashboard {
+        width: 100%;
+        min-width: 0;
+        color: #193329;
+        font-family: inherit;
+        padding-bottom: 24px;
+    }
+
+    .dashboard a {
+        text-decoration: none;
+    }
+
+    .muted {
+        color: #7c8c82;
+    }
+
+    .positive {
+        color: #188052 !important;
+    }
+
+    .negative {
+        color: #cf5555 !important;
+    }
+
+    /* ================= HEADER ================= */
+
+    .dashboard-header {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        margin: 8px 0 26px;
+    }
+
+    .dashboard-menu {
+        display: none;
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e0e9e2;
+        border-radius: 11px;
+        background: #fff;
+        color: #0b4934;
+        font-size: 19px;
+        cursor: pointer;
+    }
+
+    .dashboard-header-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .dashboard-header h1 {
+        margin: 0;
+        color: #103d2c;
+        font-size: 27px;
+        font-weight: 800;
+        line-height: 1.35;
+        letter-spacing: -0.6px;
+    }
+
+    .dashboard-header p {
+        margin: 5px 0 0;
+        color: #7c8c82;
+        font-size: 13px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .dashboard-date {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 13px;
+        border: 1px solid #e0e9e2;
+        border-radius: 10px;
+        background: #fff;
+        color: #466454;
+        font-size: 12px;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .dashboard-date-icon {
+        color: #178052;
+        font-size: 15px;
+    }
+
+    /* ================= SECTION HEADINGS ================= */
+
+    .section-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 25px 0 14px;
+    }
+
+    .section-heading h2 {
+        margin: 0;
+        color: #183b2c;
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: -0.3px;
+    }
+
+    .section-heading p {
+        margin: 5px 0 0;
+        color: #849187;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .section-tag {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 11px;
+        border: 1px solid #e2edcf;
+        border-radius: 20px;
+        background: #f2f8e7;
+        color: #54752a;
+        font-size: 11px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    /* ================= OVERALL SUMMARY ================= */
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .summary-card {
+        position: relative;
+        min-width: 0;
+        padding: 21px;
+        overflow: hidden;
+        border: 1px solid #e8eee9;
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(24, 57, 38, 0.035);
+        transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .summary-card:hover,
+    .monthly-card:hover,
+    .panel:hover {
+        box-shadow: 0 8px 24px rgba(24, 57, 38, 0.065);
+    }
+
+    .summary-card:hover,
+    .monthly-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .summary-card.primary {
+        border-color: #0b4934;
+        background: linear-gradient(135deg, #0b4934, #063626);
+        color: #fff;
+    }
+
+    .summary-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .summary-label {
+        color: #7e8e83;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+    }
+
+    .primary .summary-label {
+        color: #c2d9cb;
+    }
+
+    .summary-icon {
+        display: flex;
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        background: #edf7ef;
+        color: #168052;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .primary .summary-icon {
+        background: rgba(255, 255, 255, 0.13);
+        color: #d9f5b1;
+    }
+
+    .summary-card.expense-card .summary-icon {
+        background: #fff0ef;
+        color: #c84e4e;
+    }
+
+    .summary-card.balance-card .summary-icon {
+        background: #f1f5e5;
+        color: #637c31;
+    }
+
+    .summary-value {
+        display: block;
+        font-size: clamp(21px, 2.1vw, 29px);
+        font-weight: 800;
+        line-height: 1.35;
+        letter-spacing: -0.7px;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .summary-note {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        color: #829087;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .primary .summary-note {
+        color: #c6ded0;
+    }
+
+    .summary-note-mark {
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    /* ================= PANELS ================= */
+
+    .panel {
+        min-width: 0;
+        padding: 21px;
+        border: 1px solid #e8eee9;
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(24, 57, 38, 0.035);
+        transition: box-shadow 180ms ease;
+    }
+
+    .panel-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .panel-title {
+        margin: 0;
+        color: #183b2c;
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: -0.2px;
+    }
+
+    .panel-subtitle {
+        margin: 5px 0 0;
+        color: #849187;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    /* ================= MONTHLY CARDS ================= */
+
+    .monthly-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .monthly-card {
+        min-width: 0;
+        padding: 18px;
+        border: 1px solid #e8eee9;
+        border-radius: 13px;
+        background: #fff;
+        box-shadow: 0 3px 12px rgba(24, 57, 38, 0.025);
+        transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .monthly-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .monthly-card .label {
+        color: #7e8e83;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .monthly-symbol {
+        display: grid;
+        width: 31px;
+        height: 31px;
+        flex: 0 0 31px;
+        place-items: center;
+        border-radius: 9px;
+        background: #edf7ef;
+        color: #188052;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .monthly-card.expense-month .monthly-symbol {
+        background: #fff0ef;
+        color: #c84e4e;
+    }
+
+    .monthly-card.balance-month .monthly-symbol {
+        background: #f1f5e5;
+        color: #637c31;
+    }
+
+    .monthly-card .value {
+        font-size: clamp(19px, 2vw, 26px);
+        font-weight: 800;
+        line-height: 1.4;
+        letter-spacing: -0.5px;
+        overflow-wrap: anywhere;
+    }
+
+    .monthly-card .hint {
+        margin-top: 8px;
+        color: #8a968e;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    /* ================= MONTHLY SUMMARY TABLE ================= */
+
+    .monthly-summary-panel {
+        margin-top: 20px;
+    }
+
+    .month-count {
+        flex-shrink: 0;
+        padding: 7px 10px;
+        border-radius: 20px;
+        background: #eff6e4;
+        color: #5a762f;
+        font-size: 11px;
+        font-weight: 750;
+    }
+
+    .table-scroll {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid #e9efea;
+        border-radius: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .monthly-table {
+        width: 100%;
+        min-width: 570px;
+        border-collapse: collapse;
+    }
+
+    .monthly-table th {
+        padding: 14px 15px;
+        background: #f6f9f6;
+        color: #74847a;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: 0.45px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .monthly-table td {
+        padding: 15px;
+        border-top: 1px solid #edf1ed;
+        color: #35483c;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .monthly-table tbody tr {
+        transition: background 150ms ease;
+    }
+
+    .monthly-table tbody tr:hover {
+        background: #f8fbf8;
+    }
+
+    .monthly-table tbody tr.current-month {
+        background: #f4f9e9;
+    }
+
+    .monthly-table .month-name {
+        color: #263b2e;
+        font-weight: 750;
+    }
+
+    .current-badge {
+        display: inline-block;
+        margin-left: 7px;
+        padding: 4px 7px;
+        border-radius: 12px;
+        background: #e3f0c8;
+        color: #54752a;
+        font-size: 9px;
+        font-weight: 800;
+    }
+
+    .table-income {
+        color: #188052 !important;
+        font-weight: 750;
+    }
+
+    .table-expense {
+        color: #c84e4e !important;
+        font-weight: 750;
+    }
+
+    .table-balance {
+        font-weight: 800;
+    }
+
+    .table-empty {
+        padding: 24px !important;
+        color: #849187 !important;
+        text-align: center;
+        white-space: normal !important;
+    }
+
+    .monthly-summary-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px 16px;
+        flex-wrap: wrap;
+        margin-top: 13px;
+        color: #859187;
+        font-size: 11px;
+        line-height: 1.7;
+    }
+
+    /* ================= QUICK ACTIONS ================= */
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
+        gap: 17px;
+        margin-top: 20px;
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 11px;
+    }
+
+    .action {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        padding: 14px;
+        border: 1px solid #e8eee9;
+        border-radius: 11px;
+        background: #fbfcfb;
+        color: #263b2e;
+        transition: background 180ms ease, border-color 180ms ease,
+                    transform 180ms ease;
+    }
+
+    .action:hover {
+        transform: translateY(-2px);
+        border-color: #c7ddce;
+        background: #f3f8f3;
+    }
+
+    .action-icon {
+        display: grid;
+        width: 41px;
+        height: 41px;
+        flex: 0 0 41px;
+        place-items: center;
+        border-radius: 11px;
+        background: #eaf5ed;
+        color: #0b6546;
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .action:nth-child(2) .action-icon {
+        background: #fff0ef;
+        color: #c84e4e;
+    }
+
+    .action:nth-child(3) .action-icon {
+        background: #f1f5e5;
+        color: #657c34;
+    }
+
+    .action:nth-child(4) .action-icon {
+        background: #edf1fc;
+        color: #5268a4;
+    }
+
+    .action-content {
+        min-width: 0;
+    }
+
+    .action h3 {
+        margin: 0;
+        color: #263b2e;
+        font-size: 13px;
+        font-weight: 750;
+        line-height: 1.5;
+    }
+
+    .action p {
+        margin: 4px 0 0;
+        color: #849187;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    /* ================= CHART ================= */
+
+    .chart-area {
+        display: flex;
+        min-height: 220px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-top: 4px;
+    }
+
+    .chart {
+        position: relative;
+        width: 155px;
+        height: 155px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: conic-gradient(
+            #168052 0deg {{ income_angle|default:0 }}deg,
+            #b8d94b {{ income_angle|default:0 }}deg 360deg
+        );
+    }
+
+    .chart::after {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 103px;
+        height: 103px;
+        border-radius: 50%;
+        background: #fff;
+        content: "";
+        transform: translate(-50%, -50%);
+    }
+
+    .chart-center {
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        text-align: center;
+        pointer-events: none;
+    }
+
+    .chart-center strong {
+        max-width: 125px;
+        color: #193b2c;
+        font-size: 17px;
+        font-weight: 800;
+        overflow-wrap: anywhere;
+    }
+
+    .chart-center span {
+        margin-top: 5px;
+        color: #849187;
+        font-size: 10px;
+    }
+
+    .legend {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 20px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: #75847a;
+        font-size: 11px;
+    }
+
+    .legend-dot {
+        width: 9px;
+        height: 9px;
+        flex: 0 0 9px;
+        border-radius: 50%;
+    }
+
+    /* ================= RECENT EXPENSES ================= */
+
+    .transactions {
+        margin-top: 20px;
+    }
+
+    .transactions-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 5px;
+    }
+
+    .view-all {
+        color: #0a714d;
+        font-size: 12px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .view-all:hover {
+        text-decoration: underline;
+    }
+
+    .transaction {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 15px 0;
+        border-bottom: 1px solid #edf1ed;
+    }
+
+    .transaction:last-child {
+        border-bottom: none;
+    }
+
+    .transaction-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .transaction-icon {
+        display: grid;
+        width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+        place-items: center;
+        border-radius: 11px;
+        background: #fff0ef;
+        color: #c84e4e;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .transaction-info {
+        min-width: 0;
+    }
+
+    .transaction-name {
+        color: #304638;
+        font-size: 13px;
+        font-weight: 750;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .transaction-meta {
+        margin-top: 4px;
+        color: #849187;
+        font-size: 11px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .transaction-amount {
+        flex-shrink: 0;
+        color: #c84e4e;
+        font-size: 13px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .empty-state {
+        padding: 28px 12px;
+        color: #849187;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.8;
+    }
+
+    .empty-state strong {
+        color: #304638;
+        font-size: 13px;
+    }
+
+    /* ================= TABLET ================= */
+
+    @media (max-width: 1000px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-menu {
+            display: inline-flex;
+        }
+
+        .dashboard-header {
+            margin-top: 5px;
+            margin-bottom: 22px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 24px;
+        }
+
+        .dashboard-date {
+            padding: 9px 10px;
+            font-size: 11px;
+        }
+
+        .summary-grid,
+        .monthly-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .summary-card,
+        .monthly-card {
+            padding: 17px;
+        }
+
+        .summary-card:last-child {
+            grid-column: 1 / -1;
+        }
+
+        .summary-value {
+            font-size: clamp(21px, 3vw, 27px);
+        }
+
+        .monthly-card .value {
+            font-size: clamp(20px, 3vw, 25px);
+        }
+
+        .panel {
+            padding: 18px;
+        }
+
+        .dashboard-grid {
+            gap: 14px;
+        }
+    }
+
+    /* ================= MOBILE ================= */
+
+    @media (max-width: 520px) {
+        .dashboard-header {
+            align-items: flex-start;
+            gap: 9px;
+        }
+
+        .dashboard-menu {
+            width: 36px;
+            height: 36px;
+            flex-basis: 36px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 22px;
+        }
+
+        .dashboard-header p {
+            font-size: 12px;
+        }
+
+        .dashboard-date {
+            display: none;
+        }
+
+        .section-heading {
+            align-items: flex-start;
+            margin-top: 23px;
+        }
+
+        .section-heading h2 {
+            font-size: 17px;
+        }
+
+        .section-heading p {
+            font-size: 11px;
+        }
+
+        .summary-grid,
+        .monthly-grid {
+            grid-template-columns: 1fr;
+            gap: 11px;
+        }
+
+        .summary-card:last-child {
+            grid-column: auto;
+        }
+
+        .summary-card,
+        .monthly-card {
+            padding: 17px;
+        }
+
+        .summary-top {
+            margin-bottom: 14px;
+        }
+
+        .summary-value,
+        .monthly-card .value {
+            font-size: 25px;
+        }
+
+        .summary-label,
+        .monthly-card .label {
+            font-size: 12px;
+        }
+
+        .summary-note,
+        .monthly-card .hint {
+            font-size: 11px;
+        }
+
+        .panel {
+            padding: 15px;
+            border-radius: 13px;
+        }
+
+        .panel-title {
+            font-size: 15px;
+        }
+
+        .panel-subtitle {
+            font-size: 11px;
+        }
+
+        .actions {
+            grid-template-columns: 1fr;
+            gap: 9px;
+        }
+
+        .action {
+            padding: 12px;
+        }
+
+        .action-icon {
+            width: 38px;
+            height: 38px;
+            flex-basis: 38px;
+        }
+
+        .monthly-summary-header {
+            align-items: flex-start;
+        }
+
+        .month-count {
+            white-space: nowrap;
+        }
+
+        .monthly-summary-footer {
+            font-size: 10px;
+        }
+
+        .chart {
+            width: 140px;
+            height: 140px;
+        }
+
+        .chart::after {
+            width: 92px;
+            height: 92px;
+        }
+
+        .transaction {
+            gap: 9px;
+            padding: 13px 0;
+        }
+
+        .transaction-left {
+            gap: 9px;
+        }
+
+        .transaction-icon {
+            width: 35px;
+            height: 35px;
+            flex-basis: 35px;
+        }
+
+        .transaction-name {
+            font-size: 12px;
+        }
+
+        .transaction-meta {
+            font-size: 10px;
+        }
+
+        .transaction-amount {
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .dashboard-header h1 {
+            font-size: 20px;
+        }
+
+        .dashboard-header p {
+            font-size: 11px;
+        }
+
+        .summary-card,
+        .monthly-card {
+            padding: 14px;
+        }
+
+        .summary-value,
+        .monthly-card .value {
+            font-size: 22px;
+        }
+
+        .panel {
+            padding: 12px;
+        }
+
+        .current-badge {
+            margin-left: 3px;
+            padding: 3px 5px;
+        }
+
+        .transaction-amount {
+            font-size: 11px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .summary-card,
+        .monthly-card,
+        .panel,
+        .action {
+            transition: none;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<main class="dashboard">
+
+    <!-- HEADER -->
+
+    <header class="dashboard-header">
+        <button
+            type="button"
+            class="dashboard-menu"
+            onclick="openMenu()"
+            aria-label="Open navigation menu"
+            aria-controls="sidebar"
+            aria-expanded="false"
+        >☰</button>
+
+        <div class="dashboard-header-content">
+            <h1>Dashboard</h1>
+            <p>
+                Welcome back, {{ request.user.username }}.
+                Here's your financial overview.
+            </p>
+        </div>
+
+        <div class="dashboard-date">
+            <span class="dashboard-date-icon" aria-hidden="true">▦</span>
+            <span>{{ today|date:"d M Y" }}</span>
+        </div>
+    </header>
+
+
+    <!-- OVERALL SUMMARY -->
+
+    <section aria-labelledby="overall-heading">
+        <div class="section-heading">
+            <div>
+                <h2 id="overall-heading">Overall Summary</h2>
+                <p>Your totals across all recorded transactions.</p>
+            </div>
+            <span class="section-tag">All time</span>
+        </div>
+
+        <div class="summary-grid">
+
+            <article class="summary-card primary">
+                <div class="summary-top">
+                    <span class="summary-label">TOTAL INCOME</span>
+                    <span class="summary-icon" aria-hidden="true">↗</span>
+                </div>
+
+                <strong class="summary-value">
+                    ₹{{ total_income|floatformat:2 }}
+                </strong>
+
+                <div class="summary-note">
+                    <span class="summary-note-mark" aria-hidden="true">↑</span>
+                    Total recorded income
+                </div>
+            </article>
+
+            <article class="summary-card expense-card">
+                <div class="summary-top">
+                    <span class="summary-label">TOTAL EXPENSES</span>
+                    <span class="summary-icon" aria-hidden="true">↘</span>
+                </div>
+
+                <strong class="summary-value">
+                    ₹{{ total_expense|floatformat:2 }}
+                </strong>
+
+                <div class="summary-note negative">
+                    Total recorded spending
+                </div>
+            </article>
+
+            <article class="summary-card balance-card">
+                <div class="summary-top">
+                    <span class="summary-label">CURRENT BALANCE</span>
+                    <span class="summary-icon" aria-hidden="true">₹</span>
+                </div>
+
+                <strong class="summary-value">
+                    ₹{{ balance|floatformat:2 }}
+                </strong>
+
+                <div class="summary-note">
+                    All-time income minus expenses
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- CURRENT MONTH -->
+
+    <section aria-labelledby="month-heading">
+        <div class="section-heading">
+            <div>
+                <h2 id="month-heading">This Month</h2>
+                <p>Your income, spending, and remaining balance.</p>
+            </div>
+
+            <span class="section-tag">
+                {{ today|date:"F Y" }}
+            </span>
+        </div>
+
+        <div class="monthly-grid">
+
+            <article class="monthly-card">
+                <div class="monthly-card-top">
+                    <span class="label">Monthly Income</span>
+                    <span class="monthly-symbol" aria-hidden="true">↗</span>
+                </div>
+
+                <div class="value positive">
+                    ₹{{ monthly_income|floatformat:2 }}
+                </div>
+
+                <p class="hint">Income recorded this month</p>
+            </article>
+
+            <article class="monthly-card expense-month">
+                <div class="monthly-card-top">
+                    <span class="label">Monthly Expenses</span>
+                    <span class="monthly-symbol" aria-hidden="true">↘</span>
+                </div>
+
+                <div class="value negative">
+                    ₹{{ monthly_expense|floatformat:2 }}
+                </div>
+
+                <p class="hint">Expenses recorded this month</p>
+            </article>
+
+            <article class="monthly-card balance-month">
+                <div class="monthly-card-top">
+                    <span class="label">Monthly Balance</span>
+                    <span class="monthly-symbol" aria-hidden="true">₹</span>
+                </div>
+
+                <div class="value {% if monthly_balance < 0 %}negative{% else %}positive{% endif %}">
+                    ₹{{ monthly_balance|floatformat:2 }}
+                </div>
+
+                <p class="hint">Monthly income minus expenses</p>
+            </article>
+
+        </div>
+    </section>
+
+
+    <!-- MONTHLY SUMMARY TABLE -->
+
+    <section class="panel monthly-summary-panel"
+             aria-labelledby="monthly-summary-heading">
+
+        <div class="panel-heading">
+            <div>
+                <h2 class="panel-title" id="monthly-summary-heading">
+                    Monthly Summary
+                </h2>
+                <p class="panel-subtitle">
+                    Track income, expenses, and balance month by month.
+                </p>
+            </div>
+
+            <span class="month-count">
+                {{ monthly_summary|length }}
+                month{{ monthly_summary|length|pluralize }}
+            </span>
+        </div>
+
+        <div class="table-scroll">
+            <table class="monthly-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Month</th>
+                        <th scope="col">Income</th>
+                        <th scope="col">Expenses</th>
+                        <th scope="col">Balance</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for month in monthly_summary %}
+                    <tr {% if month.is_current %}class="current-month"{% endif %}>
+                        <td class="month-name">
+                            {{ month.month }}
+                            {% if month.is_current %}
+                                <span class="current-badge">Current</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="table-income">
+                            ₹{{ month.income|floatformat:2 }}
+                        </td>
+
+                        <td class="table-expense">
+                            ₹{{ month.expense|floatformat:2 }}
+                        </td>
+
+                        <td class="table-balance {% if month.balance < 0 %}negative{% else %}positive{% endif %}">
+                            ₹{{ month.balance|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="table-empty">
+                            No income or expenses have been recorded yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="monthly-summary-footer">
+            <span>Scroll horizontally on small screens to see all columns.</span>
+            <span>Green: positive balance · Red: negative balance</span>
+        </div>
+    </section>
+
+
+    <!-- QUICK ACTIONS AND CHART -->
+
+    <div class="dashboard-grid">
+
+        <section class="panel" aria-labelledby="quick-actions-heading">
+            <div class="panel-heading">
+                <div>
+                    <h2 class="panel-title" id="quick-actions-heading">
+                        Quick Actions
+                    </h2>
+                    <p class="panel-subtitle">
+                        Common tasks, all in one place.
+                    </p>
+                </div>
+            </div>
+
+            <div class="actions">
+
+                <a href="{% url 'add_income' %}" class="action">
+                    <span class="action-icon" aria-hidden="true">↗</span>
+                    <span class="action-content">
+                        <h3>Add Income</h3>
+                        <p>Record new income</p>
+                    </span>
+                </a>
+
+                <a href="{% url 'add_expense' %}" class="action">
+                    <span class="action-icon" aria-hidden="true">↘</span>
+                    <span class="action-content">
+                        <h3>Add Expense</h3>
+                        <p>Record your spending</p>
+                    </span>
+                </a>
+
+                <a href="{% url 'add_category' %}" class="action">
+                    <span class="action-icon" aria-hidden="true">▦</span>
+                    <span class="action-content">
+                        <h3>Add Category</h3>
+                        <p>Organize expenses</p>
+                    </span>
+                </a>
+
+                <a href="{% url 'settings' %}" class="action">
+                    <span class="action-icon" aria-hidden="true">⚙</span>
+                    <span class="action-content">
+                        <h3>Settings</h3>
+                        <p>Manage your account</p>
+                    </span>
+                </a>
+
+            </div>
+        </section>
+
+
+        <!-- MONTHLY CHART -->
+
+        <section class="panel" aria-labelledby="chart-heading">
+            <div class="panel-heading">
+                <div>
+                    <h2 class="panel-title" id="chart-heading">
+                        Monthly Overview
+                    </h2>
+                    <p class="panel-subtitle">
+                        Income versus expenses this month.
+                    </p>
+                </div>
+            </div>
+
+            <div class="chart-area">
+                <div
+                    class="chart"
+                    role="img"
+                    aria-label="Monthly income and expense comparison"
+                >
+                    <div class="chart-center">
+                        <strong>
+                            ₹{{ monthly_balance|floatformat:0 }}
+                        </strong>
+                        <span>Monthly balance</span>
+                    </div>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="legend-dot"
+                              style="background:#168052"></span>
+                        Income
+                    </div>
+
+                    <div class="legend-item">
+                        <span class="legend-dot"
+                              style="background:#b8d94b"></span>
+                        Expenses
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+
+    <!-- RECENT EXPENSES -->
+
+    <section class="panel transactions"
+             aria-labelledby="recent-expenses-heading">
+
+        <div class="transactions-header">
+            <h2 class="panel-title" id="recent-expenses-heading">
+                Recent Expenses
+            </h2>
+
+            <a href="{% url 'add_expense' %}" class="view-all">
+                Add expense →
+            </a>
+        </div>
+
+        <p class="panel-subtitle">
+            Your latest recorded expenses.
+        </p>
+
+        {% for expense in recent_expenses %}
+        <article class="transaction">
+
+            <div class="transaction-left">
+                <span class="transaction-icon" aria-hidden="true">↘</span>
+
+                <div class="transaction-info">
+                    <div class="transaction-name">
+                        {{ expense.title }}
+                    </div>
+
+                    <div class="transaction-meta">
+                        {{ expense.category.name|default:"Uncategorized" }}
+                        · {{ expense.date|date:"d M Y" }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="transaction-amount">
+                − ₹{{ expense.amount|floatformat:2 }}
+            </div>
+
+        </article>
+        {% empty %}
+        <div class="empty-state">
+            <strong>No expenses yet</strong><br>
+            Add your first expense to see it here.
+        </div>
+        {% endfor %}
+
+    </section>
+
+</main>
+{% endblock %}

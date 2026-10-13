@@ -1,0 +1,1071 @@
+
+{% extends "base.html" %}
+
+{% block title %}Settings | Expense Tracker{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --st-green: #176b4d;
+        --st-green-dark: #0b3b2b;
+        --st-text: #1b3025;
+        --st-muted: #78877d;
+        --st-border: #e2eae3;
+    }
+
+    .settings-page,
+    .settings-page * {
+        box-sizing: border-box;
+    }
+
+    .settings-page {
+        width: 100%;
+        max-width: 680px;
+        min-width: 0;
+        margin: 0 auto;
+        padding: 22px 18px 35px;
+        color: var(--st-text);
+        font-family: inherit;
+    }
+
+    /* HEADER */
+
+    .st-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .st-mobile-menu {
+        display: none;
+        width: 39px;
+        height: 39px;
+        flex: 0 0 39px;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--st-border);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--st-green-dark);
+        cursor: pointer;
+    }
+
+    .st-mobile-menu svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .st-header-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .st-title {
+        margin: 0;
+        color: var(--st-green-dark);
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1.3;
+    }
+
+    .st-subtitle {
+        margin: 5px 0 0;
+        color: var(--st-muted);
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .st-header-icon {
+        display: grid;
+        width: 43px;
+        height: 43px;
+        flex: 0 0 43px;
+        place-items: center;
+        border: 1px solid #dce9dc;
+        border-radius: 11px;
+        background: #edf6ed;
+        color: var(--st-green);
+    }
+
+    .st-header-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    /* DJANGO MESSAGES */
+
+    .st-messages {
+        display: grid;
+        gap: 9px;
+        margin-bottom: 17px;
+    }
+
+    .st-message {
+        padding: 11px 13px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-size: 13px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .st-message.success {
+        color: #17633c;
+        background: #eff9f1;
+        border-color: #d0ead7;
+    }
+
+    .st-message.error,
+    .st-message.danger {
+        color: #a52d35;
+        background: #fff2f2;
+        border-color: #f2d4d5;
+    }
+
+    .st-message.warning {
+        color: #865d10;
+        background: #fff9e9;
+        border-color: #f1e2b8;
+    }
+
+    .st-message.info {
+        color: #285c83;
+        background: #f0f7fd;
+        border-color: #d6e8f7;
+    }
+
+    /* SETTINGS BOX */
+
+    .st-card {
+        width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid var(--st-border);
+        border-radius: 13px;
+        background: #fff;
+        box-shadow: 0 5px 20px rgba(18, 53, 32, 0.06);
+    }
+
+    .st-form {
+        padding: 24px;
+    }
+
+    /* FORM FIELDS */
+
+    .st-field {
+        min-width: 0;
+        margin-bottom: 21px;
+    }
+
+    .st-field:last-child {
+        margin-bottom: 0;
+    }
+
+    .st-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+
+    .st-label {
+        display: block;
+        color: #354a3c;
+        font-size: 13px;
+        font-weight: 750;
+        line-height: 1.5;
+    }
+
+    .st-required {
+        color: #c03943;
+    }
+
+    .st-optional,
+    .st-readonly {
+        color: #849187;
+        font-size: 11px;
+        font-weight: 500;
+    }
+
+    .st-readonly {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .st-readonly svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    .st-control {
+        position: relative;
+        min-width: 0;
+    }
+
+    .st-input-icon {
+        position: absolute;
+        top: 50%;
+        left: 13px;
+        display: grid;
+        place-items: center;
+        color: #809085;
+        pointer-events: none;
+        transform: translateY(-50%);
+    }
+
+    .st-input-icon svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    .st-input-prefix {
+        position: absolute;
+        top: 50%;
+        left: 14px;
+        color: var(--st-green);
+        font-size: 14px;
+        font-weight: 800;
+        pointer-events: none;
+        transform: translateY(-50%);
+    }
+
+    .st-input {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        min-height: 44px;
+        padding: 10px 13px 10px 41px;
+        border: 1px solid #dce6dd;
+        border-radius: 8px;
+        outline: none;
+        background: #fff;
+        color: #23392a;
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 1.5;
+        transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .st-input:hover:not(:disabled) {
+        border-color: #b5cbb9;
+    }
+
+    .st-input:focus-visible {
+        border-color: var(--st-green);
+        box-shadow: 0 0 0 3px rgba(23, 107, 77, 0.1);
+    }
+
+    .st-input::placeholder {
+        color: #a2ada4;
+        opacity: 1;
+    }
+
+    .st-input:disabled {
+        border-color: #e5ebe5;
+        background: #f4f7f4;
+        color: #748176;
+        cursor: not-allowed;
+        opacity: 1;
+    }
+
+    .st-input.has-prefix {
+        padding-left: 34px;
+    }
+
+    .st-input[aria-invalid="true"] {
+        border-color: #cf454d;
+    }
+
+    .st-help {
+        margin: 6px 0 0;
+        color: #849187;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .st-error-text {
+        display: none;
+        margin: 6px 0 0;
+        color: #b42332;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .st-error-text.is-visible {
+        display: block;
+    }
+
+    /* BUDGET REMINDER */
+
+    .st-budget-tip {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 12px;
+        padding: 12px;
+        border: 1px solid #e3edcf;
+        border-radius: 8px;
+        background: #f7faef;
+    }
+
+    .st-budget-tip-icon {
+        display: grid;
+        width: 28px;
+        height: 28px;
+        flex: 0 0 28px;
+        place-items: center;
+        border-radius: 7px;
+        background: #e4f1ca;
+        color: #4d702d;
+    }
+
+    .st-budget-tip-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .st-budget-tip strong {
+        display: block;
+        margin-bottom: 4px;
+        color: #3d5b2d;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .st-budget-tip p {
+        margin: 0;
+        color: #718066;
+        font-size: 11px;
+        line-height: 1.7;
+    }
+
+    /* BUTTONS */
+
+    .st-form-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 13px;
+        margin-top: 24px;
+        padding-top: 19px;
+        border-top: 1px solid #edf1ed;
+    }
+
+    .st-footer-note {
+        margin: 0;
+        color: #87948a;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .st-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 9px;
+    }
+
+    .st-button {
+        display: inline-flex;
+        min-height: 40px;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 10px 15px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: 750;
+        line-height: 1.4;
+        cursor: pointer;
+        transition: background 180ms ease, border-color 180ms ease;
+    }
+
+    .st-button svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    .st-button:focus-visible {
+        outline: 3px solid rgba(23, 107, 77, 0.2);
+        outline-offset: 2px;
+    }
+
+    .st-button-primary {
+        border-color: var(--st-green);
+        background: var(--st-green);
+        color: #fff;
+    }
+
+    .st-button-primary:hover {
+        border-color: var(--st-green-dark);
+        background: var(--st-green-dark);
+    }
+
+    .st-button-primary svg {
+        color: #d8f4b5;
+    }
+
+    .st-button-secondary {
+        border-color: #dce6dd;
+        background: #fff;
+        color: #536458;
+    }
+
+    .st-button-secondary:hover {
+        border-color: #b9cbbd;
+        background: #f5f9f5;
+    }
+
+    /* TABLET */
+
+    @media (max-width: 900px) {
+        .settings-page {
+            padding: 20px 15px 30px;
+        }
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 650px) {
+        .settings-page {
+            max-width: 520px;
+            padding: 16px 11px 25px;
+        }
+
+        .st-header {
+            align-items: flex-start;
+            gap: 9px;
+            margin-bottom: 17px;
+        }
+
+        .st-mobile-menu {
+            display: inline-flex;
+            margin-top: 2px;
+        }
+
+        .st-title {
+            font-size: 24px;
+        }
+
+        .st-subtitle {
+            font-size: 12px;
+        }
+
+        .st-header-icon {
+            width: 36px;
+            height: 36px;
+            flex-basis: 36px;
+        }
+
+        .st-header-icon svg {
+            width: 19px;
+            height: 19px;
+        }
+
+        .st-card {
+            border-radius: 11px;
+        }
+
+        .st-form {
+            padding: 18px 16px;
+        }
+
+        .st-field {
+            margin-bottom: 18px;
+        }
+
+        .st-label {
+            font-size: 12px;
+        }
+
+        .st-input {
+            min-height: 43px;
+            font-size: 13px;
+        }
+
+        .st-form-footer {
+            align-items: stretch;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .st-footer-note {
+            font-size: 11px;
+        }
+
+        .st-actions {
+            width: 100%;
+        }
+
+        .st-button {
+            flex: 1;
+            min-height: 41px;
+        }
+    }
+
+    /* SMALL MOBILE */
+
+    @media (max-width: 380px) {
+        .settings-page {
+            padding-right: 7px;
+            padding-left: 7px;
+        }
+
+        .st-header {
+            gap: 7px;
+        }
+
+        .st-mobile-menu {
+            width: 34px;
+            height: 35px;
+            flex-basis: 34px;
+        }
+
+        .st-title {
+            font-size: 22px;
+        }
+
+        .st-subtitle {
+            font-size: 11px;
+        }
+
+        .st-header-icon {
+            width: 32px;
+            height: 32px;
+            flex-basis: 32px;
+        }
+
+        .st-form {
+            padding: 15px 12px;
+        }
+
+        .st-label-row {
+            flex-wrap: wrap;
+        }
+
+        .st-button {
+            gap: 5px;
+            padding: 9px 8px;
+            font-size: 11px;
+        }
+
+        .st-budget-tip {
+            padding: 10px;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .st-input,
+        .st-button {
+            transition: none;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<main class="settings-page">
+
+    <!-- HEADER -->
+
+    <header class="st-header">
+
+        <button
+            type="button"
+            class="st-mobile-menu"
+            id="settings-menu-button"
+            aria-label="Open main navigation"
+            aria-controls="sidebar"
+            aria-expanded="false"
+            title="Open menu"
+        >
+            <svg
+                id="settings-menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                aria-hidden="true"
+            >
+                <path d="M4 6h16"></path>
+                <path d="M4 12h16"></path>
+                <path d="M4 18h16"></path>
+            </svg>
+        </button>
+
+        <div class="st-header-content">
+            <h1 class="st-title">Settings</h1>
+            <p class="st-subtitle">
+                Update your email address and spending limit.
+            </p>
+        </div>
+
+        <div class="st-header-icon" aria-hidden="true">
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 2.94-.08-.02a1.7 1.7 0 0 0-1.76.57l-.05.07h-3.4l-.05-.07a1.7 1.7 0 0 0-1.76-.57l-.08.02-1.7-2.94.06-.06A1.7 1.7 0 0 0 9.6 15l-.08-.04v-3.4l.08-.04a1.7 1.7 0 0 0-.34-1.88L9.2 9.56l1.7-2.94.08.02a1.7 1.7 0 0 0 1.76-.57l.05-.07h3.4l.05.07a1.7 1.7 0 0 0 1.76.57l.08-.02 1.7 2.94-.06.06A1.7 1.7 0 0 0 19.4 11.5l.08.04v3.4z"
+                    transform="translate(-2.35 -2.35) scale(1.2)"
+                ></path>
+            </svg>
+        </div>
+
+    </header>
+
+    <!-- DJANGO MESSAGES -->
+
+    {% if messages %}
+        <div class="st-messages" aria-live="polite">
+            {% for message in messages %}
+                <div class="st-message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- SETTINGS FORM BOX -->
+
+    <section class="st-card" aria-label="Account settings">
+
+        <form method="POST" class="st-form" id="settings-form">
+            {% csrf_token %}
+
+            <!-- USERNAME -->
+
+            <div class="st-field">
+
+                <div class="st-label-row">
+                    <label class="st-label" for="username">
+                        Username
+                    </label>
+
+                    <span class="st-readonly">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                        </svg>
+                        Read only
+                    </span>
+                </div>
+
+                <div class="st-control">
+                    <span class="st-input-icon" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="12" cy="8" r="4"></circle>
+                            <path d="M5 21v-2a7 7 0 0 1 14 0v2"></path>
+                        </svg>
+                    </span>
+
+                    <input
+                        type="text"
+                        id="username"
+                        class="st-input"
+                        value="{{ request.user.username }}"
+                        autocomplete="username"
+                        disabled
+                    >
+                </div>
+
+                <p class="st-help">
+                    Your username cannot be changed from this page.
+                </p>
+
+            </div>
+
+            <!-- EMAIL ADDRESS -->
+
+            <div class="st-field">
+
+                <div class="st-label-row">
+                    <label class="st-label" for="email">
+                        Email address
+                        <span class="st-required" aria-hidden="true">*</span>
+                    </label>
+                </div>
+
+                <div class="st-control">
+                    <span class="st-input-icon" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                            <path d="m3 7 9 6 9-6"></path>
+                        </svg>
+                    </span>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        class="st-input"
+                        value="{{ request.user.email }}"
+                        placeholder="you@example.com"
+                        autocomplete="email"
+                        maxlength="254"
+                        autocapitalize="none"
+                        spellcheck="false"
+                        aria-describedby="email-help email-error"
+                        required
+                    >
+                </div>
+
+                <p class="st-help" id="email-help">
+                    Used for account communication and spending alerts.
+                </p>
+
+                <p
+                    class="st-error-text"
+                    id="email-error"
+                    aria-live="polite"
+                ></p>
+
+            </div>
+
+            <!-- MONTHLY SPENDING LIMIT -->
+
+            <div class="st-field">
+
+                <div class="st-label-row">
+                    <label class="st-label" for="spending_limit">
+                        Monthly spending limit
+                        <span class="st-required" aria-hidden="true">*</span>
+                    </label>
+
+                    <span class="st-optional">INR (₹)</span>
+                </div>
+
+                <div class="st-control">
+                    <span class="st-input-prefix" aria-hidden="true">₹</span>
+
+                    <input
+                        type="number"
+                        id="spending_limit"
+                        name="spending_limit"
+                        class="st-input has-prefix"
+                        value="{{ profile.spending_limit }}"
+                        min="0"
+                        max="999999999999"
+                        step="0.01"
+                        inputmode="decimal"
+                        placeholder="0.00"
+                        aria-describedby="spending-help"
+                        required
+                    >
+                </div>
+
+                <p class="st-help" id="spending-help">
+                    Set the maximum amount you plan to spend each month.
+                </p>
+
+                <div class="st-budget-tip">
+                    <span class="st-budget-tip-icon" aria-hidden="true">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 11v5m0-8h.01"></path>
+                        </svg>
+                    </span>
+
+                    <div>
+                        <strong>Budget reminder</strong>
+                        <p>
+                            Your spending limit helps you monitor expenses
+                            and receive alerts when configured conditions are met.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ACTION BUTTONS -->
+
+            <div class="st-form-footer">
+
+                <p class="st-footer-note">
+                    <span class="st-required">*</span> Required fields
+                </p>
+
+                <div class="st-actions">
+
+                    <button
+                        type="reset"
+                        class="st-button st-button-secondary"
+                        id="settings-reset"
+                    >
+                        Reset
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="st-button st-button-primary"
+                        id="settings-save"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12l4 4v12a2 2 0 0 1-2 2Z"></path>
+                            <path d="M17 21v-8H7v8M7 3v5h9"></path>
+                        </svg>
+                        Save changes
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+(function () {
+    "use strict";
+
+    const form = document.getElementById("settings-form");
+    const emailInput = document.getElementById("email");
+    const emailError = document.getElementById("email-error");
+    const spendingInput = document.getElementById("spending_limit");
+    const resetButton = document.getElementById("settings-reset");
+
+    if (!form || !emailInput || !emailError || !spendingInput) {
+        return;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    const maxSpending = 999999999999;
+
+    function showEmailError(message) {
+        emailInput.setCustomValidity(message);
+        emailInput.setAttribute("aria-invalid", "true");
+        emailError.textContent = message;
+        emailError.classList.add("is-visible");
+    }
+
+    function clearEmailError() {
+        emailInput.setCustomValidity("");
+        emailInput.removeAttribute("aria-invalid");
+        emailError.textContent = "";
+        emailError.classList.remove("is-visible");
+    }
+
+    function validateEmail() {
+        const email = emailInput.value.trim();
+        emailInput.value = email;
+
+        if (!email) {
+            showEmailError("Email address is required.");
+            return false;
+        }
+
+        if (email.length > 254 || !emailPattern.test(email)) {
+            showEmailError(
+                "Enter a valid email address without spaces."
+            );
+            return false;
+        }
+
+        clearEmailError();
+        return true;
+    }
+
+    emailInput.addEventListener("input", function () {
+        clearEmailError();
+
+        if (emailInput.value.length > 254) {
+            showEmailError(
+                "Email address must not exceed 254 characters."
+            );
+        }
+    });
+
+    emailInput.addEventListener("blur", function () {
+        if (emailInput.value.trim()) {
+            validateEmail();
+        }
+    });
+
+    spendingInput.addEventListener("input", function () {
+        const value = spendingInput.value.trim();
+        const amount = Number(value);
+
+        if (
+            value !== "" &&
+            (!Number.isFinite(amount) ||
+            amount < 0 ||
+            amount > maxSpending)
+        ) {
+            spendingInput.setCustomValidity(
+                "Enter an amount between 0 and 999999999999."
+            );
+        } else {
+            spendingInput.setCustomValidity("");
+        }
+    });
+
+    form.addEventListener("submit", function (event) {
+        emailInput.value = emailInput.value.trim();
+
+        if (!validateEmail()) {
+            event.preventDefault();
+            emailInput.focus();
+            emailInput.reportValidity();
+            return;
+        }
+
+        const spendingValue = spendingInput.value.trim();
+        const spendingAmount = Number(spendingValue);
+
+        if (
+            spendingValue === "" ||
+            !Number.isFinite(spendingAmount) ||
+            spendingAmount < 0 ||
+            spendingAmount > maxSpending
+        ) {
+            event.preventDefault();
+            spendingInput.focus();
+            spendingInput.reportValidity();
+        }
+    });
+
+    if (resetButton) {
+        resetButton.addEventListener("click", function () {
+            window.setTimeout(function () {
+                clearEmailError();
+                spendingInput.setCustomValidity("");
+            }, 0);
+        });
+    }
+
+    /* MOBILE SIDEBAR */
+
+    const menuButton = document.getElementById("settings-menu-button");
+    const menuIcon = document.getElementById("settings-menu-icon");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+
+    function isMenuOpen() {
+        return Boolean(
+            sidebar && sidebar.classList.contains("show")
+        );
+    }
+
+    function updateMenuButton() {
+        if (!menuButton) return;
+
+        const open = isMenuOpen();
+
+        menuButton.setAttribute(
+            "aria-expanded",
+            open ? "true" : "false"
+        );
+
+        menuButton.setAttribute(
+            "aria-label",
+            open ? "Close main navigation" : "Open main navigation"
+        );
+
+        menuButton.title = open ? "Close menu" : "Open menu";
+
+        if (menuIcon) {
+            menuIcon.innerHTML = open
+                ? '<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>'
+                : '<path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path>';
+        }
+    }
+
+    if (menuButton && sidebar) {
+        menuButton.addEventListener("click", function () {
+            const existingMenuButton =
+                document.querySelector(".menu-button");
+
+            if (
+                existingMenuButton &&
+                existingMenuButton !== menuButton
+            ) {
+                existingMenuButton.click();
+            } else {
+                sidebar.classList.toggle("show");
+
+                if (overlay) {
+                    overlay.classList.toggle(
+                        "show",
+                        sidebar.classList.contains("show")
+                    );
+                }
+            }
+
+            window.requestAnimationFrame(updateMenuButton);
+        });
+
+        if (overlay) {
+            overlay.addEventListener("click", function () {
+                window.requestAnimationFrame(updateMenuButton);
+            });
+        }
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                window.requestAnimationFrame(updateMenuButton);
+            }
+        });
+
+        window.addEventListener("resize", updateMenuButton);
+
+        updateMenuButton();
+    }
+})();
+</script>
+{% endblock %}
