@@ -6,6 +6,7 @@ urlpatterns = [
     path("login/", views.login, name="login"),
     path('register/',views.register,name="register"),
     path('welcome/',views.welcome,name="welcome"),
+    path('api/dashboard-live/',views.dashboard_live_data,name="dashboard_live_data"),
     path("logout/", views.user_logout, name="user_logout"),
     path("add_category/", views.add_category, name="add_category"),
     path('edit_category/<int:id>/',views.edit_category,name="edit_category"),

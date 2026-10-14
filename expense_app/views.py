@@ -15,6 +15,17 @@ from django.utils import timezone
 from django.utils.dateparse import parse_date
 
 from .models import *
+import json
+from datetime import date
+
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from django.http import JsonResponse
+from django.utils import timezone
+from django.views.decorators.http import require_GET
+
+# Replace these imports with your actual model imports.
+from .models import Income, Expense
 
 
 
@@ -98,7 +109,63 @@ def register(request):
 # =========================
 # DASHBOARD
 # =========================
+@login_required
+@require_GET
+def dashboard_live_data(request):
+    today = timezone.localdate()
+    month_start = today.replace(day=1)
 
+    # IMPORTANT:
+    # Adapt these filters to your actual model fields and
+    # ownership relationship. Never return other users' data.
+
+    incomes = Income.objects.filter(user=request.user)
+    expenses = Expense.objects.filter(user=request.user)
+
+    total_income = incomes.aggregate(
+        total=Sum("amount")
+    )["total"] or 0
+
+    total_expense = expenses.aggregate(
+        total=Sum("amount")
+    )["total"] or 0
+
+    monthly_income = incomes.filter(
+        date__gte=month_start,
+        date__lte=today,
+    ).aggregate(total=Sum("amount"))["total"] or 0
+
+    monthly_expense = expenses.filter(
+        date__gte=month_start,
+        date__lte=today,
+    ).aggregate(total=Sum("amount"))["total"] or 0
+
+    recent_expenses = expenses.select_related(
+        "category"
+    ).order_by("-date", "-pk")[:5]
+
+    return JsonResponse({
+        "total_income": str(total_income),
+        "total_expense": str(total_expense),
+        "balance": str(total_income - total_expense),
+        "monthly_income": str(monthly_income),
+        "monthly_expense": str(monthly_expense),
+        "monthly_balance": str(
+            monthly_income - monthly_expense
+        ),
+        "recent_expenses": [
+            {
+                "title": item.title,
+                "amount": str(item.amount),
+                "date": item.date.isoformat(),
+                "category": (
+                    item.category.name
+                    if item.category else "Uncategorized"
+                ),
+            }
+            for item in recent_expenses
+        ],
+    })
 
 
 @login_required(login_url="login")
