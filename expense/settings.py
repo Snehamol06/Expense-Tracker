@@ -87,7 +87,7 @@ import dj_database_url
 import os
 
 # Use SQLite locally unless explicitly configured otherwise.
-USE_SQLITE = os.getenv("USE_SQLITE", "True").lower() == "true"
+USE_SQLITE = os.getenv("USE_SQLITE", "False").lower() == "true"
 
 if USE_SQLITE:
     DATABASES = {
@@ -103,7 +103,7 @@ else:
             "NAME": os.environ["DB_NAME"],
             "USER": os.environ["DB_USER"],
             "PASSWORD": os.environ["DB_PASSWORD"],
-            "HOST": os.getenv("DB_HOST", "localhost"),
+            "HOST": os.environ["DB_HOST"],
             "PORT": os.getenv("DB_PORT", "5432"),
         }
     }
